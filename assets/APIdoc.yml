@@ -1,0 +1,115 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: F2D contest table generator
+  description: Auto generator for control line combat contests table
+servers:
+  - url: https://virtserver.swaggerhub.com/svetlakov/F2D1/1.0.0
+security:
+  - bearerAuth: []
+paths:
+  /contests:
+    get:
+      description: Returns a list of available contests
+      parameters:
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageOffset"
+      responses:
+        "200":
+          description: Successfully returned a list of contests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/contest"
+
+        "400":
+          $ref: "#/components/responses/400Error"
+    post:
+      description: Lets a user post a new contest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/contest"
+      responses:
+        "201":
+          description: Successfully created a new artist
+
+        "400":
+          $ref: "#/components/responses/400Error"
+  /contests/{id}:
+    get:
+      description: Obtain information about a contests from its unique id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: Successfully returned a contest
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contest_name:
+                    type: string
+                  contest_type:
+                    type: string
+                  contest_country:
+                    type: string
+                  contest_id:
+                    type: integer
+                  contest_date:
+                    type: string
+
+        "400":
+          $ref: "#/components/responses/400Error"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    contest:
+      type: object
+      properties:
+        contest_name:
+          type: string
+        contest_type:
+          type: string
+        contest_country:
+          type: string
+        contest_id:
+          type: integer
+        contest_date:
+          type: string
+  parameters:
+    PageLimit:
+      name: limit
+      in: query
+      description: Limits the number of items on a page
+      schema:
+        type: integer
+
+    PageOffset:
+      name: offset
+      in: query
+      description: Specifies the page number of the artists to be displayed
+      schema:
+        type: integer
+  responses:
+    400Error:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
